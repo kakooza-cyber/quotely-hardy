@@ -1,0 +1,3 @@
+[build]
+  command = "echo 'No build needed'"
+  publish = "/"  # or your output folder (e.g., "dist", "public")
