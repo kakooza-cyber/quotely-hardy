@@ -1,1 +1,11 @@
-
+{
+  "name": "quotely-website",
+  "version": "1.0.0",
+  "description": "Inspirational quotes website with database",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "pg": "^8.11.0"
+  }
+}
