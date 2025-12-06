@@ -67,6 +67,19 @@
                     <p>${data.stats.categories_count}</p>
                 </div>
             `;
+            // Monitor database performance
+async function getDatabaseMetrics() {
+  const response = await fetch('/.netlify/functions/db-metrics');
+  const metrics = await response.json();
+  
+  // Display metrics
+  document.getElementById('metrics').innerHTML = `
+    <h3>Database Metrics</h3>
+    <p>Active Connections: ${metrics.active_connections}</p>
+    <p>Storage Used: ${(metrics.storage_used / 1024 / 1024).toFixed(2)} MB</p>
+    <p>Query Performance: ${metrics.avg_query_time}ms</p>
+  `;
+        }
             
             // Load quotes
             const quotesResponse = await fetch('/.netlify/functions/get-quotes?limit=50');
