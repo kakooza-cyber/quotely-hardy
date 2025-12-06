@@ -89,25 +89,20 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="quotes-container">
-                <div class="quotes-grid" id="quotesGrid">
-                    <!-- Quotes will be loaded here -->
-                </div>
-            </div>
-            
-            <div class="pagination">
-                <button class="pagination-btn" id="prevPage">
-                    <i class="fas fa-chevron-left"></i> Previous
-                </button>
-                <div class="page-numbers" id="pageNumbers">
-                    <!-- Page numbers will be generated here -->
-                </div>
-                <button class="pagination-btn" id="nextPage">
-                    Next <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
+            <!-- In quotes.html, update the quotes grid -->
+<div class="quotes-grid" id="quotesGrid">
+  <!-- Quotes will load here dynamically -->
+  <div class="loading">Loading quotes...</div>
+</div>
+
+<!-- Add category filter -->
+<div class="category-filter">
+  <label for="categorySelect">Filter by Category:</label>
+  <select id="categorySelect">
+    <option value="all">All Categories</option>
+    <!-- Categories will load dynamically -->
+  </select>
+    </div>
     </main>
 
     <!-- Submit Quote Modal -->
@@ -157,6 +152,71 @@
             </div>
         </div>
     </div>
+    <script>
+  document.addEventListener('DOMContentLoaded', async function() {
+    // Load categories for filter
+    const categories = await QuotelyAPI.getCategories();
+    const categorySelect = document.getElementById('categorySelect');
+    
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+      categorySelect.appendChild(option);
+    });
+    
+    // Load initial quotes
+    await loadQuotes();
+    
+    // Add filter change listener
+    categorySelect.addEventListener('change', async function() {
+      await loadQuotes(this.value);
+    });
+  });
+  
+  async function loadQuotes(category = 'all') {
+    const quotesGrid = document.getElementById('quotesGrid');
+    quotesGrid.innerHTML = '<div class="loading">Loading quotes...</div>';
+    
+    const quotes = await QuotelyAPI.getQuotesByCategory(category);
+    
+    if (quotes.length === 0) {
+      quotesGrid.innerHTML = '<div class="no-quotes">No quotes found.</div>';
+      return;
+    }
+    
+    // Render quotes
+    quotesGrid.innerHTML = quotes.map(quote => `
+      <div class="quote-card">
+        <div class="quote-text">"${quote.text}"</div>
+        <div class="quote-author">- ${quote.author}</div>
+        <div class="quote-meta">
+          <span class="category-tag">${quote.category}</span>
+          <div class="quote-actions">
+            <button class="btn-icon like-btn" data-id="${quote.id}">
+              <i class="far fa-heart"></i>
+              <span>${quote.likes}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    
+    // Add like button listeners
+    document.querySelectorAll('.like-btn').forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const quoteId = this.dataset.id;
+        const updated = await QuotelyAPI.likeQuote(quoteId);
+        if (updated) {
+          const likeCount = this.querySelector('span');
+          likeCount.textContent = updated.likes;
+          this.style.color = '#ff4757';
+          this.querySelector('i').className = 'fas fa-heart';
+        }
+      });
+    });
+  }
+    </script>
 
     <!-- Footer -->
     <footer class="footer">
@@ -218,7 +278,7 @@
             </div>
         </div>
     </footer>
-    <!-- Add this BEFORE your script.js -->
+    
 <script src="api.js"></script>
 <script src="script.js"></script>
  <script src="data.js"></script>
