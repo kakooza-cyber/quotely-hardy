@@ -44,40 +44,37 @@
             <div class="page-header">
                 <h1><i class="fas fa-sun"></i> Quote of the Day</h1>
                 <p class="date-display" id="currentDate"></p>
-            </div>
-            
-            <div class="quote-of-day-container">
-                    
-                <div class="quote-card featured">
-                    <div class="quote-background" id="quoteBackground">
-                        <!-- Background image set via JavaScript -->
-                    </div>
-                    <div class="quote-content">
-                        <div class="quote-category">
-                            <span class="category-tag" id="quoteCategory">Motivation</span>
-                            <div class="quote-actions">
-                                <button class="btn-icon" id="likeBtn">
-                                    <i class="far fa-heart"></i>
-                                    <span class="like-count">245</span>
-                                </button>
-                                <button class="btn-icon" id="favoriteBtn">
-                                    <i class="far fa-star"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="quote-text">
-                            <i class="fas fa-quote-left quote-icon"></i>
-                            <p id="dailyQuote">The only way to do great work is to love what you do.</p>
-                            <i class="fas fa-quote-right quote-icon"></i>
-                        </div>
-                        
-                        <div class="quote-author">
-                            <div class="author-info">
-                                <h3 id="quoteAuthor">Steve Jobs</h3>
-                                <p class="author-bio">American entrepreneur and co-founder of Apple Inc.</p>
-                            </div>
-                            <div class="share-section">
+                <!-- In dashboard.html, update the quote section -->
+<div class="quote-content">
+  <div class="quote-category">
+    <span class="category-tag" id="quoteCategory">Loading...</span>
+    <div class="quote-actions">
+      <button class="btn-icon" id="likeBtn" data-quote-id="">
+        <i class="far fa-heart"></i>
+        <span class="like-count">0</span>
+      </button>
+      <button class="btn-icon" id="favoriteBtn">
+        <i class="far fa-star"></i>
+      </button>
+    </div>
+  </div>
+  
+  <div class="quote-text">
+    <i class="fas fa-quote-left quote-icon"></i>
+    <p id="dailyQuote">Loading daily quote...</p>
+    <i class="fas fa-quote-right quote-icon"></i>
+  </div>
+  
+  <div class="quote-author">
+    <div class="author-info">
+      <h3 id="quoteAuthor">Loading...</h3>
+      <p class="author-bio">Loading quote information...</p>
+    </div>
+    
+  </div>
+          </div>
+  
+                              <div class="share-section">
                                 <p>Share this quote:</p>
                                 <div class="share-buttons">
                                     <button class="share-btn twitter">
@@ -107,6 +104,35 @@
             </div>
         </div>
     </main>
+    <script>
+  // Load daily quote when page loads
+  document.addEventListener('DOMContentLoaded', async function() {
+    const quote = await QuotelyAPI.getDailyQuote();
+    
+    if (quote) {
+      // Update page with quote data
+      document.getElementById('dailyQuote').textContent = quote.text;
+      document.getElementById('quoteAuthor').textContent = quote.author;
+      document.getElementById('quoteCategory').textContent = quote.category;
+      document.querySelector('.like-count').textContent = quote.likes;
+      
+      // Set quote ID on like button
+      const likeBtn = document.getElementById('likeBtn');
+      likeBtn.dataset.quoteId = quote.id;
+      
+      // Update like functionality
+      likeBtn.onclick = async function() {
+        const updated = await QuotelyAPI.likeQuote(quote.id);
+        if (updated) {
+          document.querySelector('.like-count').textContent = updated.likes;
+          alert('Quote liked! ❤️');
+        }
+      };
+    } else {
+      document.getElementById('dailyQuote').textContent = 'No quote available today.';
+    }
+  });
+    </script>
 
     <!-- Footer -->
     <footer class="footer">
