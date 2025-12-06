@@ -106,52 +106,52 @@
     </main>
 
     <!-- Submit Quote Modal -->
-    <div class="modal" id="submitQuoteModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Submit a Quote</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="quoteSubmissionForm">
-                    <div class="form-group">
-                        <label for="quoteText">Quote Text *</label>
-                        <textarea id="quoteText" rows="3" placeholder="Enter the quote..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="quoteAuthor">Author *</label>
-                        <input type="text" id="quoteAuthor" placeholder="Author name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="quoteCategory">Category *</label>
-                        <select id="quoteCategory" required>
-                            <option value="">Select a category</option>
-                            <option value="motivation">Motivation</option>
-                            <option value="success">Success</option>
-                            <option value="life">Life</option>
-                            <option value="love">Love</option>
-                            <option value="inspiration">Inspiration</option>
-                            <option value="wisdom">Wisdom</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="quoteSource">Source (Optional)</label>
-                        <input type="text" id="quoteSource" placeholder="Book, speech, etc.">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="userEmail">Your Email *</label>
-                        <input type="email" id="userEmail" placeholder="For confirmation" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Submit Quote</button>
-                </form>
-            </div>
-        </div>
-    </div>
+    <form id="quoteSubmissionForm">
+  <!-- Your form fields -->
+  <div class="form-group">
+    <label for="quoteText">Quote Text *</label>
+    <textarea id="quoteText" rows="3" required></textarea>
+  </div>
+  
+  <div class="form-group">
+    <label for="quoteAuthor">Author *</label>
+    <input type="text" id="quoteAuthor" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="quoteCategory">Category *</label>
+    <input type="text" id="quoteCategory" required>
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Submit Quote</button>
+</form>
+
+<script>
+  document.getElementById('quoteSubmissionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const quoteData = {
+      text: document.getElementById('quoteText').value,
+      author: document.getElementById('quoteAuthor').value,
+      category: document.getElementById('quoteCategory').value,
+      source: document.getElementById('quoteSource')?.value || ''
+    };
+    
+    const result = await QuotelyAPI.submitQuote(quoteData);
+    
+    if (result) {
+      alert('Quote submitted successfully! 🎉');
+      this.reset();
+      
+      // Refresh quotes display
+      if (typeof loadQuotes === 'function') {
+        await loadQuotes();
+      }
+    } else {
+      alert('Failed to submit quote. Please try again.');
+    }
+  });
+    </script>
     <script>
   document.addEventListener('DOMContentLoaded', async function() {
     // Load categories for filter
