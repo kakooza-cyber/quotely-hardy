@@ -78,6 +78,25 @@
             </div>
         </div>
     </main>
+    <script>
+  document.addEventListener('DOMContentLoaded', async function() {
+    // Load proverbs (quotes with wisdom category)
+    const proverbs = await QuotelyAPI.getQuotesByCategory('wisdom');
+    const proverbsGrid = document.getElementById('proverbsGrid');
+    
+    if (proverbs.length === 0) {
+      proverbsGrid.innerHTML = '<div class="no-proverbs">No proverbs found.</div>';
+      return;
+    }
+    
+    proverbsGrid.innerHTML = proverbs.map(proverb => `
+      <div class="proverb-card">
+        <div class="proverb-text">"${proverb.text}"</div>
+        <div class="proverb-author">- ${proverb.author}</div>
+      </div>
+    `).join('');
+  });
+    </script>
 
     <!-- Footer (Same as dashboard) -->
     <footer class="footer">
